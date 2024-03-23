@@ -1,12 +1,44 @@
 import java.sql.SQLException;
 
 public class Controller {
-    private MemeDB db = new MemeDB();
+    private TextDB db = new TextDB();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        MemeDB memeDB = new MemeDB();
-        memeDB.connect();
-        memeDB.createTable("text", TableType.TEXT);
+        Controller controller = new Controller();
+        controller.run();
     }
 
+    public void run() {
+        db.connect();
+        String input;
+        while (!(input = ConsoleHelper.readString()).equals("exit")) {
+            String[] strings = input.split(" ");
+            switch (strings[0]) {
+                case "create" -> db.createTable(strings[1]);
+                case "add" -> db.addRecord(strings[1], strings[2]);
+                case "print" -> {
+                    if (strings.length > 2)
+                        db.print(strings[1], Integer.parseInt(strings[2]));
+                    else
+                        db.print(strings[1]);
+                }
+                case "tables" -> db.printTables();
+                case "drop" -> {
+                    if (!db.isTableExist(strings[1])) {
+                        ConsoleHelper.write("Table is not exist");
+                        break;
+                    }
+
+                    ConsoleHelper.write("Are you sure you want to delete table " + strings[1] + "? Print Yes/No");
+                    String answer = ConsoleHelper.readString();
+                    if (answer.equalsIgnoreCase("yes"))
+                        db.deleteTable(strings[1]);
+                    else
+                        ConsoleHelper.write("Operation canceled");
+                }
+                case "delete" -> db.deleteRecord(strings[1], Integer.parseInt(strings[2]));
+                default -> ConsoleHelper.write("Unknown command");
+            }
+        }
+    }
 }
