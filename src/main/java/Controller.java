@@ -25,8 +25,8 @@ public class Controller {
                 case "tables" -> db.printTables();
                 case "drop" -> {
                     if (!db.isTableExist(strings[1])) {
-                        ConsoleHelper.write("Table is not exist");
-                        break;
+                         ConsoleHelper.write("Table is not exist");
+                       break;
                     }
 
                     ConsoleHelper.write("Are you sure you want to delete table " + strings[1] + "? Print Yes/No");
@@ -37,6 +37,15 @@ public class Controller {
                         ConsoleHelper.write("Operation canceled");
                 }
                 case "delete" -> db.deleteRecord(strings[1], Integer.parseInt(strings[2]));
+                case "help" -> ConsoleHelper.write("""
+                        create <table name> - creates a table
+                        add <table name> <string> - adds a record in a table
+                        print <table name> - shows all records
+                        print <table name> <id> - shows record by id
+                        tables - shows all tables
+                        drop <tables name> - deletes a table
+                        help - shows this
+                        """);
                 default -> ConsoleHelper.write("Unknown command");
             }
         }

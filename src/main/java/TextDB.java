@@ -46,8 +46,13 @@ public class TextDB {
         updateResultSet();
 
         String record;
-        while((record = getRecord()) != null)
+        if((record = getRecord()) == null)
+            ConsoleHelper.write("Table is empty");
+        else
             ConsoleHelper.write(record);
+
+        while((record = getRecord()) != null)
+                ConsoleHelper.write(record);
     }
 
     public void printTables() {
@@ -55,9 +60,8 @@ public class TextDB {
         execute("SELECT name FROM sqlite_master WHERE type='table';");
         updateResultSet();
         try {
-            while (resultSet.next()) {
+            while (resultSet.next())
                 ConsoleHelper.write(resultSet.getString("name"));
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -75,13 +79,15 @@ public class TextDB {
 
     public boolean isTableExist(String tableName) {
         createStatement();
-        execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "';");
+        execute("SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "' LIMIT 1;");
         updateResultSet();
         try {
-            if(resultSet.next())
+            if(resultSet.next()) {
+                resultSet.close();
                 return true;
+            }
         } catch (SQLException e) {
-            System.out.println("ERROR4");
+            e.printStackTrace();
         }
         return false;
     }
@@ -100,8 +106,8 @@ public class TextDB {
         try {
             statement = connection.createStatement();
         } catch (SQLException e) {
-            //throw new RuntimeException(e);
-            System.out.println("1ERROR!");
+            ConsoleHelper.write("Connection lost");
+            e.printStackTrace();
         }
     }
 
@@ -109,8 +115,8 @@ public class TextDB {
         try {
             statement.execute(command);
         } catch (SQLException e) {
-            //throw new RuntimeException(e);
-            System.out.println("2ERROR!");
+            ConsoleHelper.write("Error arguments");
+            e.printStackTrace();
         }
     }
 
@@ -118,8 +124,7 @@ public class TextDB {
         try {
             resultSet = statement.getResultSet();
         } catch (SQLException e) {
-            //throw new RuntimeException(e);
-            System.out.println("3ERROR!");
+            e.printStackTrace();
         }
     }
 }
