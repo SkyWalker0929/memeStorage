@@ -1,9 +1,8 @@
-import java.sql.SQLException;
 
 public class Controller {
     private TextDB db = new TextDB();
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) {
         Controller controller = new Controller();
         controller.run();
     }
@@ -15,7 +14,12 @@ public class Controller {
             String[] strings = input.split(" ");
             switch (strings[0]) {
                 case "create" -> db.createTable(strings[1]);
-                case "add" -> db.addRecord(strings[1], strings[2]);
+                case "add" -> {
+                    StringBuilder builder = new StringBuilder();
+                    for(int i = 2; i < strings.length; i++)
+                        builder.append(strings[i]).append(" ");
+                    db.addRecord(strings[1], builder.toString());
+                }
                 case "print" -> {
                     if (strings.length > 2)
                         db.print(strings[1], Integer.parseInt(strings[2]));
